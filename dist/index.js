@@ -381,6 +381,21 @@ module.exports._enoent = enoent;
 
 /***/ }),
 
+/***/ 31:
+/***/ (function(module) {
+
+let getMessage = function(actor) {
+    return `
+    Hello @${actor} :wave: - Thanks for opening a release issue. After checking the issue against the guidelines, here are some next steps:
+    
+    - Add this issue to the **Release tracker** project board, which is organized with columns representing months of the year. Select the column corresponding to this release's next ship date.
+    `
+}
+
+module.exports = getMessage;
+
+/***/ }),
+
 /***/ 39:
 /***/ (function(module) {
 
@@ -490,19 +505,18 @@ module.exports = require("os");
 /***/ (function(__unusedmodule, __unusedexports, __webpack_require__) {
 
 const core = __webpack_require__(470);
-const { context } = __webpack_require__(469);
+const { GitHub, context } = __webpack_require__(469);
+const getMessage = __webpack_require__(31);
 
 // most @actions toolkit packages have async methods
 async function run() {
   try { 
     // Get authenticated GitHub client (Ocktokit) and other context
-    //const github = new GitHub(process.env.GITHUB_TOKEN);
+    const github = new GitHub(process.env.GITHUB_TOKEN);
     const { owner, repo } = context.repo;
     const actor = context.actor;
     
-    // DEFAULT OUTPUT MESSAGE
-    //const outputMessage = "";
-    // TO DO: Take as input parameter
+    // TO DO: Collect message as input parameter
 
     core.debug("Event name: " + context.eventName);
     core.debug("Workflow: " + context.workflow);
@@ -541,7 +555,11 @@ async function run() {
     // If not, add to output message
 
     // Post comment using output message
-    // TO Do
+    github.issues.createComment({
+      repo,
+      issue_number: context.payload.issue.number,
+      body: `${getMessage(actor)}`
+    })
   } 
   catch (error) {
     core.setFailed(error.message);

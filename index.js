@@ -1,17 +1,16 @@
 const core = require('@actions/core');
-const { context } = require('@actions/github');
+const { GitHub, context } = require('@actions/github');
+const getMessage = require('./get-message');
 
 // most @actions toolkit packages have async methods
 async function run() {
   try { 
     // Get authenticated GitHub client (Ocktokit) and other context
-    //const github = new GitHub(process.env.GITHUB_TOKEN);
+    const github = new GitHub(process.env.GITHUB_TOKEN);
     const { owner, repo } = context.repo;
     const actor = context.actor;
     
-    // DEFAULT OUTPUT MESSAGE
-    //const outputMessage = "";
-    // TO DO: Take as input parameter
+    // TO DO: Collect message as input parameter
 
     core.debug("Event name: " + context.eventName);
     core.debug("Workflow: " + context.workflow);
@@ -50,7 +49,11 @@ async function run() {
     // If not, add to output message
 
     // Post comment using output message
-    // TO Do
+    github.issues.createComment({
+      repo,
+      issue_number: context.payload.issue.number,
+      body: `${getMessage(actor)}`
+    })
   } 
   catch (error) {
     core.setFailed(error.message);

@@ -551,16 +551,39 @@ async function run() {
     }
 
     // Check if issue is on specified project board
-    // TO DO
     // If not, add to output message
+    let found = false;
+    const columns = await github.projects.listColumns({
+      project_id: 1
+    });
+    for (const column of columns) {
+      core.debug("Reading column: " + column.name + " " + column.id + " " + column.node_id);
+      let cards = await github.projects.listCards({
+        column_id: column.node_id,
+        per_page: 100
+      });
+      cards = cards.data.filter((card) => card["content_url"] != undefined);
+      for (const card of cards) {
+        const { content_url } = card;
+        const issueNumber = content_url.split("issues/")[1];
+        if (issueNumber == content_url.payload.issue.number) {
+          found = true;
+        }
+      }
+    }
 
-    // Post comment using output message
-    await github.issues.createComment({
-      owner: owner,
-      repo: repo,
-      issue_number: context.payload.issue.number,
-      body: `${getMessage(actor)}`
-    })
+    if (found) {
+      core.debug("Found issue in project already.");
+    } else {
+      core.debug("Issue not found in project, posting comment.");
+      // Post comment using output message
+      await github.issues.createComment({
+        owner: owner,
+        repo: repo,
+        issue_number: context.payload.issue.number,
+        body: `${getMessage(actor)}`
+      });
+    }
   } 
   catch (error) {
     core.setFailed(error.message);

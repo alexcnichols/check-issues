@@ -555,8 +555,9 @@ async function run() {
     // If not, add to output message
 
     // Post comment using output message
-    github.issues.createComment({
-      repo,
+    await github.issues.createComment({
+      owner: owner,
+      repo: repo,
       issue_number: context.payload.issue.number,
       body: `${getMessage(actor)}`
     })

@@ -1,7 +1,7 @@
 {
-  "name": "javascript-action",
+  "name": "check-issues",
   "version": "1.0.0",
-  "description": "JavaScript Action Template",
+  "description": "A GitHub Action to check issues against repository guidelines and comment with any corrective steps.",
   "main": "index.js",
   "scripts": {
     "lint": "eslint index.js",
@@ -10,25 +10,26 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/actions/javascript-action.git"
+    "url": "git+https://github.com/alexcnichols/check-issues.git"
   },
   "keywords": [
     "GitHub",
     "Actions",
     "JavaScript"
   ],
-  "author": "GitHub",
+  "author": "alexcnichols",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/actions/javascript-action/issues"
+    "url": "https://github.com/alexcnichols/check-issues/issues"
   },
-  "homepage": "https://github.com/actions/javascript-action#readme",
+  "homepage": "https://github.com/alexcnichols/check-issues#readme",
   "dependencies": {
-    "@actions/core": "^1.1.1"
+    "@actions/core": "^1.2.3",
+    "@actions/github": "^2.1.1"
   },
   "devDependencies": {
     "@zeit/ncc": "^0.20.5",
     "eslint": "^6.3.0",
-    "jest": "^24.9.0"
+    "jest": "^26.0.1"
   }
 }

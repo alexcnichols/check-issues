@@ -1,18 +1,56 @@
 const core = require('@actions/core');
-const wait = require('./wait');
-
+const { context } = require('@actions/github');
 
 // most @actions toolkit packages have async methods
 async function run() {
   try { 
-    const ms = core.getInput('milliseconds');
-    console.log(`Waiting ${ms} milliseconds ...`)
+    // Get authenticated GitHub client (Ocktokit) and other context
+    //const github = new GitHub(process.env.GITHUB_TOKEN);
+    const { owner, repo } = context.repo;
+    const actor = context.actor;
+    
+    // DEFAULT OUTPUT MESSAGE
+    //const outputMessage = "";
+    // TO DO: Take as input parameter
 
-    core.debug((new Date()).toTimeString())
-    await wait(parseInt(ms));
-    core.debug((new Date()).toTimeString())
+    core.debug("Event name: " + context.eventName);
+    core.debug("Workflow: " + context.workflow);
+    core.debug("Action: " + context.action);
+    core.debug("Owner: " + owner);
+    core.debug("Repo: " + repo);
+    core.debug("Actor: " + actor);
 
-    core.setOutput('time', new Date().toTimeString());
+    // Check if issue event
+    if (context.eventName === 'issues') {
+      core.debug("Valid event: " + context.eventName);
+    } else {
+      core.debug("Invalid event: " + context.eventName);
+      return;
+    }
+
+    // Check if issue event opened activity
+    if (context.payload.action === 'opened') {
+      core.debug("Valid event: " + context.payload.action);
+    } else {
+      core.debug("Invalid event: " + context.payload.action);
+      return;
+    }
+
+    // Check if issue payload
+    const isIssue = !!context.payload.issue;
+    if (isIssue) {
+      core.debug("Valid payload: " + context.payload.issue.number)
+    } else {
+      core.debug("Invalid payload");
+      return;
+    }
+
+    // Check if issue is on specified project board
+    // TO DO
+    // If not, add to output message
+
+    // Post comment using output message
+    // TO Do
   } 
   catch (error) {
     core.setFailed(error.message);
